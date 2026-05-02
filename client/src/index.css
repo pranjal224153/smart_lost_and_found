@@ -1,0 +1,170 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@source "./";
+/* ─── Custom Theme ─────────────────────────────────────────────── */
+@theme {
+  --color-primary-50: #ecfeff;
+  --color-primary-100: #cffafe;
+  --color-primary-200: #a5f3fc;
+  --color-primary-300: #67e8f9;
+  --color-primary-400: #22d3ee;
+  --color-primary-500: #06b6d4;
+  --color-primary-600: #0891b2;
+  --color-primary-700: #0e7490;
+  --color-primary-800: #155e75;
+  --color-primary-900: #164e63;
+
+  --color-surface-50: #ffffff;
+  --color-surface-100: #f8fafc;
+  --color-surface-200: #f1f5f9;
+  --color-surface-300: #e2e8f0;
+  --color-surface-400: #94a3b8;
+  --color-surface-500: #64748b;
+  --color-surface-600: #475569;
+  --color-surface-700: #334155;
+  --color-surface-800: #1e293b;
+  --color-surface-900: #0f172a;
+  --color-surface-950: #0b1120;
+
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ─── Dark Mode Overrides ───────────────────────────────────────── */
+:root.dark, .dark {
+  --color-surface-50: #0b1120;
+  --color-surface-100: #0f172a;
+  --color-surface-200: #1e293b;
+  --color-surface-300: #334155;
+  --color-surface-400: #475569;
+  --color-surface-500: #64748b;
+  --color-surface-600: #94a3b8;
+  --color-surface-700: #cbd5e1;
+  --color-surface-800: #e2e8f0;
+  --color-surface-900: #f1f5f9;
+  --color-surface-950: #ffffff;
+}
+
+/* ─── Base Styles ──────────────────────────────────────────────── */
+html {
+  background-color: var(--color-surface-50);
+  color: var(--color-surface-900);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-surface-50);
+  color: var(--color-surface-900);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.015;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.dark body::before {
+  opacity: 0.03;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dark body, .dark #root {
+  background-color: var(--color-surface-50);
+}
+
+.dark .bg-white, .dark .bg-surface-50 {
+  background-color: var(--color-surface-50) !important;
+}
+
+.dark .bg-surface-100 {
+  background-color: var(--color-surface-100) !important;
+}
+
+
+/* ─── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-300);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-surface-400);
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-surface-700);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-surface-600);
+}
+
+/* ─── Skeleton Animation ───────────────────────────────────────── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+.skeleton-pulse {
+  animation: skeleton-pulse 2s ease-in-out infinite;
+}
+
+/* ─── Glass Effect ─────────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+.dark .glass {
+  background: rgba(17, 24, 39, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* ─── Match Progress Bar ───────────────────────────────────────── */
+.match-bar {
+  background: linear-gradient(90deg, var(--color-primary-600), var(--color-primary-400));
+  border-radius: 999px;
+  height: 8px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Utility Animations */
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}

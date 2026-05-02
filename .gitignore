@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+ml-service/venv/
+ml-service/__pycache__/
+
+# Environment Variables
+.env
+client/.env
+server/.env
+ml-service/.env
+
+# Build outputs
+client/dist/
+server/public/uploads/*
+!server/public/uploads/.gitkeep
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
