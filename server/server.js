@@ -45,8 +45,17 @@ app.use('/api/matches', matchRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 // Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/api/health', async (req, res) => {
+  const mlClient = require('./utils/mlClient');
+  const mlHealth = await mlClient.healthCheck();
+  
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    ml_service_configured_url: process.env.ML_SERVICE_URL || 'NOT SET (Defaults to http://localhost:8000)',
+    server_configured_url: process.env.SERVER_URL || 'NOT SET (Defaults to http://localhost:5000)',
+    ml_service_status: mlHealth
+  });
 });
 
 // Error handler (must be last)
