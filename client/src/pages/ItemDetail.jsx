@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiArrowLeft, HiCalendar, HiLocationMarker, HiMail, HiPhone, HiOfficeBuilding, HiArchive, HiSparkles } from 'react-icons/hi';
+import { HiArrowLeft, HiCalendar, HiLocationMarker, HiMail, HiPhone, HiOfficeBuilding, HiArchive, HiSparkles, HiPhotograph } from 'react-icons/hi';
 import api from '../api/axios';
 import { formatDate, getCategoryLabel } from '../utils/helpers';
 import SkeletonCard from '../components/ui/SkeletonCard';
@@ -155,6 +155,19 @@ export default function ItemDetail() {
                 >
                   Delete Item
                 </button>
+                <button
+                  onClick={async () => {
+                    try {
+                      await api.post(`/items/${id}/rematch`);
+                      toast.success('AI Matching started. Refresh in a moment.');
+                    } catch {
+                      toast.error('Failed to start matching');
+                    }
+                  }}
+                  className="px-5 py-2.5 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium rounded-xl hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors flex items-center gap-2"
+                >
+                  <HiSparkles className="w-4 h-4" /> Find Matches Again
+                </button>
               </div>
             )}
           </div>
@@ -170,7 +183,14 @@ export default function ItemDetail() {
               {matches.map(m => {
                 const otherItem = item.type === 'lost' ? m.foundItem : m.lostItem;
                 if (!otherItem) return null;
-                return <ItemCard key={m._id} item={otherItem} matchScore={m.combinedScore} />;
+                return (
+                  <ItemCard 
+                    key={m._id} 
+                    item={otherItem} 
+                    matchScore={m.combinedScore} 
+                    to={`/match/${m._id}`}
+                  />
+                );
               })}
             </div>
           </div>

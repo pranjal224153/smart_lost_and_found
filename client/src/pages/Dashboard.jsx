@@ -45,10 +45,21 @@ export default function Dashboard() {
     const fetchData = async () => {
       setLoading(true);
       try {
+        // Also fetch counts to keep everything in sync
+        const [lostCountRes, foundCountRes, matchCountRes] = await Promise.all([
+          api.get('/items/my', { params: { type: 'lost' } }),
+          api.get('/items/my', { params: { type: 'found' } }),
+          api.get('/matches'),
+        ]);
+        
+        setCounts({
+          lost: lostCountRes.data.data.length,
+          found: foundCountRes.data.data.length,
+          matches: matchCountRes.data.data.length
+        });
+
         if (activeTab === 'matches') {
-          const { data } = await api.get('/matches');
-          setMatches(data.data || []);
-          setCounts(prev => ({ ...prev, matches: data.data.length }));
+          setMatches(matchCountRes.data.data || []);
         } else {
           const params = { type: activeTab };
           if (filters.category) params.category = filters.category;
@@ -57,7 +68,6 @@ export default function Dashboard() {
           if (filters.sort) params.sort = filters.sort;
           const { data } = await api.get('/items/my', { params });
           setItems(data.data || []);
-          setCounts(prev => ({ ...prev, [activeTab]: data.data.length }));
         }
       } catch (err) {
         toast.error('Failed to fetch data');
@@ -117,10 +127,22 @@ export default function Dashboard() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
-        <h1 className="text-3xl font-bold text-surface-900 dark:text-white">Dashboard</h1>
-        <p className="text-surface-500 mt-1">Manage your lost and found items</p>
+        <div>
+          <h1 className="text-3xl font-bold text-surface-900 dark:text-white">Dashboard</h1>
+          <p className="text-surface-500 mt-1">Manage your lost and found items</p>
+        </div>
+        <button
+          onClick={() => {
+            // Trigger refresh by updating filters slightly or just re-running effect
+            setFilters(prev => ({ ...prev }));
+            toast.success('Refreshing data...');
+          }}
+          className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-sm font-medium hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors shadow-sm"
+        >
+          <HiSparkles className="w-4 h-4 text-primary-500" /> Refresh Matches
+        </button>
       </motion.div>
 
       {/* Tabs */}

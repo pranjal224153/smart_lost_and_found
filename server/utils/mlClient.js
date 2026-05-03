@@ -60,7 +60,7 @@ const mlClient = {
           category: c.category,
           image_url: getFullUrl(c.imageUrl),
         })),
-      }, { timeout: 60000 });
+      }, { timeout: 120000 });
       return response.data.matches;
     } catch (error) {
       console.error('ML match error:', error.message);

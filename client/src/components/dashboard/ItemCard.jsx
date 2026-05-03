@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { HiLocationMarker, HiCalendar, HiPhotograph } from 'react-icons/hi';
+import { HiLocationMarker, HiCalendar, HiPhotograph, HiSparkles } from 'react-icons/hi';
 import { formatDate, getCategoryLabel } from '../../utils/helpers';
 
-export default function ItemCard({ item, matchScore, onResolve, onDelete }) {
+export default function ItemCard({ item, matchScore, onResolve, onDelete, to }) {
   const statusColors = {
     open: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
     resolved: 'bg-surface-100 text-surface-500 dark:bg-surface-800 dark:text-surface-400',
@@ -18,7 +18,7 @@ export default function ItemCard({ item, matchScore, onResolve, onDelete }) {
       className="group rounded-2xl overflow-hidden bg-surface-100 border border-surface-200 dark:border-surface-800 hover:border-primary-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.1)] transition-all duration-500 flex flex-col h-full"
     >
       <div className="flex-grow">
-        <Link to={`/items/${item._id}`}>
+        <Link to={to || `/items/${item._id}`}>
           {/* Image */}
           <div className="relative h-48 overflow-hidden bg-surface-100 dark:bg-surface-200">
             {item.imageUrl ? (
@@ -44,6 +44,13 @@ export default function ItemCard({ item, matchScore, onResolve, onDelete }) {
             <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium ${statusColors[item.status]}`}>
               {item.status}
             </div>
+            {/* Matches badge */}
+            {item.matchCount > 0 && (
+              <div className="absolute bottom-3 left-3 px-2 py-1 bg-primary-600 text-white text-[10px] font-bold rounded flex items-center gap-1 shadow-lg animate-pulse">
+                <HiSparkles className="w-3 h-3" />
+                {item.matchCount} MATCH{item.matchCount > 1 ? 'ES' : ''} FOUND
+              </div>
+            )}
           </div>
 
           {/* Content */}

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   createItem, getItems, getMyItems, getItem,
-  updateItem, deleteItem, resolveItem,
+  updateItem, deleteItem, resolveItem, rematchItem,
 } = require('../controllers/itemController');
 const auth = require('../middleware/auth');
 const { upload } = require('../middleware/upload');
@@ -19,5 +19,6 @@ router.route('/:id')
   .delete(auth, deleteItem);
 
 router.put('/:id/resolve', auth, resolveItem);
+router.post('/:id/rematch', auth, rematchItem);
 
 module.exports = router;

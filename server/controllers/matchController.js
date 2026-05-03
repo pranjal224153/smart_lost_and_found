@@ -13,11 +13,11 @@ exports.getMatchesForItem = async (req, res, next) => {
     })
       .populate({
         path: 'lostItem',
-        populate: { path: 'user', select: 'name email' },
+        populate: { path: 'user', select: 'name email avatar' },
       })
       .populate({
         path: 'foundItem',
-        populate: { path: 'user', select: 'name email' },
+        populate: { path: 'user', select: 'name email avatar' },
       })
       .sort({ combinedScore: -1 });
 

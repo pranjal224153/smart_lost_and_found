@@ -92,7 +92,7 @@ async function triggerMatching(newItem) {
 
   // Save matches above threshold
   for (const result of matchResults) {
-    if (result.combined_score < 0.3) continue;
+    if (result.combined_score < 0.30) continue;
 
     const lostItem = newItem.type === 'lost' ? newItem._id : result.candidate_id;
     const foundItem = newItem.type === 'found' ? newItem._id : result.candidate_id;
@@ -174,9 +174,27 @@ exports.getItems = async (req, res, next) => {
       Item.countDocuments(query),
     ]);
 
+    // Add match counts
+    const itemIds = items.map(i => i._id);
+    const matchCounts = await Match.aggregate([
+      { $match: { $or: [{ lostItem: { $in: itemIds } }, { foundItem: { $in: itemIds } }], status: { $ne: 'rejected' } } },
+      { $project: { items: ['$lostItem', '$foundItem'] } },
+      { $unwind: '$items' },
+      { $match: { items: { $in: itemIds } } },
+      { $group: { _id: '$items', count: { $sum: 1 } } }
+    ]);
+
+    const countMap = {};
+    matchCounts.forEach(c => { countMap[c._id.toString()] = c.count; });
+
+    const itemsWithMatches = items.map(item => ({
+      ...item.toObject(),
+      matchCount: countMap[item._id.toString()] || 0
+    }));
+
     res.json({
       success: true,
-      data: items,
+      data: itemsWithMatches,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
@@ -200,9 +218,27 @@ exports.getMyItems = async (req, res, next) => {
 
     const items = await Item.find(query).sort({ createdAt: -1 });
 
+    // Add match counts
+    const itemIds = items.map(i => i._id);
+    const matchCounts = await Match.aggregate([
+      { $match: { $or: [{ lostItem: { $in: itemIds } }, { foundItem: { $in: itemIds } }], status: { $ne: 'rejected' } } },
+      { $project: { items: ['$lostItem', '$foundItem'] } },
+      { $unwind: '$items' },
+      { $match: { items: { $in: itemIds } } },
+      { $group: { _id: '$items', count: { $sum: 1 } } }
+    ]);
+
+    const countMap = {};
+    matchCounts.forEach(c => { countMap[c._id.toString()] = c.count; });
+
+    const itemsWithMatches = items.map(item => ({
+      ...item.toObject(),
+      matchCount: countMap[item._id.toString()] || 0
+    }));
+
     res.json({
       success: true,
-      data: items,
+      data: itemsWithMatches,
     });
   } catch (error) {
     next(error);
@@ -370,6 +406,21 @@ exports.resolveItem = async (req, res, next) => {
       success: true,
       data: item,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Re-trigger matching for an existing item
+// @route   POST /api/items/:id/rematch
+exports.rematchItem = async (req, res, next) => {
+  try {
+    const item = await Item.findById(req.params.id);
+    if (!item) {
+      return res.status(404).json({ success: false, message: 'Item not found' });
+    }
+    triggerMatching(item).catch(err => console.error('Rematch error:', err));
+    res.json({ success: true, message: 'Matching started. Check back in a few seconds.' });
   } catch (error) {
     next(error);
   }
