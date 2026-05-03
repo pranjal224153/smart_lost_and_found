@@ -20,7 +20,8 @@ connectDB();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://smart-lost-and-found-2oel6cgfz-pranjal224153s-projects.vercel.app"
+    "https://smart-lost-and-found-2oel6cgfz-pranjal224153s-projects.vercel.app",
+    "https://smart-lost-and-found-w50yd4f9f-pranjal224153s-projects.vercel.app"
   ],
   credentials: true,
 }));
