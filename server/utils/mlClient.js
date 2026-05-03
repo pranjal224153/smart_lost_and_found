@@ -1,6 +1,7 @@
 const axios = require('axios');
 
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
+const rawMlUrl = process.env.ML_SERVICE_URL || 'http://localhost:8000';
+const ML_SERVICE_URL = rawMlUrl.endsWith('/') ? rawMlUrl.slice(0, -1) : rawMlUrl;
 
 const mlClient = {
   /**
