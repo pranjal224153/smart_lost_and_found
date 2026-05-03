@@ -94,7 +94,7 @@ export function NotificationProvider({ children }) {
   useEffect(() => {
     if (user) {
       fetchNotifications();
-      const interval = setInterval(() => fetchNotifications(true), 15000); // Poll every 15s
+      const interval = setInterval(() => fetchNotifications(true), 5000); // Poll every 5s for near-instant notification
       return () => clearInterval(interval);
     } else {
       setNotifications([]);

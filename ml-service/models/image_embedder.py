@@ -26,14 +26,14 @@ class ImageEmbedder:
         for filename in ("onnx/model_quantized.onnx", "onnx/model.onnx"):
             try:
                 model_path = hf_hub_download(
-                    repo_id="Xenova/mobilenet_v2",
+                    repo_id="Xenova/resnet-50",
                     filename=filename,
                 )
                 break
             except Exception:
                 continue
         else:
-            raise RuntimeError("Could not download MobileNetV2 ONNX model from Xenova/mobilenet_v2")
+            raise RuntimeError("Could not download ResNet50 ONNX model from Xenova/resnet-50")
 
         self.session = ort.InferenceSession(model_path, providers=['CPUExecutionProvider'])
 

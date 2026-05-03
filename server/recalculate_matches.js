@@ -20,7 +20,7 @@ async function triggerMatching(newItem, candidates) {
 
     let matchCount = 0;
     for (const result of matchResults) {
-      if (result.combined_score < 0.30) continue;
+      if (result.combined_score < 0.50) continue;
 
       const lostItem = newItem.type === 'lost' ? newItem._id : result.candidate_id;
       const foundItem = newItem.type === 'found' ? newItem._id : result.candidate_id;

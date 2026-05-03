@@ -60,7 +60,7 @@ exports.createItem = async (req, res, next) => {
 
     const item = await Item.create(itemData);
 
-    // Trigger async matching (don't await — let it run in background)
+    // Trigger async matching (let it run in background for speedy API response)
     triggerMatching(item).catch(err => console.error('Match trigger error:', err));
 
     res.status(201).json({
@@ -92,7 +92,7 @@ async function triggerMatching(newItem) {
 
   // Save matches above threshold
   for (const result of matchResults) {
-    if (result.combined_score < 0.30) continue;
+    if (result.combined_score < 0.50) continue;
 
     const lostItem = newItem.type === 'lost' ? newItem._id : result.candidate_id;
     const foundItem = newItem.type === 'found' ? newItem._id : result.candidate_id;
@@ -420,7 +420,7 @@ exports.rematchItem = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Item not found' });
     }
     triggerMatching(item).catch(err => console.error('Rematch error:', err));
-    res.json({ success: true, message: 'Matching started. Check back in a few seconds.' });
+    res.json({ success: true, message: 'Matching started. You will be notified instantly when matches are found.' });
   } catch (error) {
     next(error);
   }
