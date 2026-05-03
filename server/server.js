@@ -18,11 +18,20 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://smart-lost-and-found-2oel6cgfz-pranjal224153s-projects.vercel.app",
-    "https://smart-lost-and-found-w50yd4f9f-pranjal224153s-projects.vercel.app"
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (
+      origin === "http://localhost:5173" || 
+      origin.endsWith(".vercel.app") || 
+      origin === process.env.CLIENT_URL
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));
