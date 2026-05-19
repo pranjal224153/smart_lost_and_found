@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiArrowLeft, HiMail, HiPhone, HiLocationMarker, HiCalendar, HiPhotograph, HiShieldCheck, HiLockClosed } from 'react-icons/hi';
+import { HiArrowLeft, HiMail, HiPhone, HiLocationMarker, HiCalendar, HiPhotograph, HiShieldCheck, HiLockClosed, HiSparkles } from 'react-icons/hi';
 import api from '../api/axios';
 import { formatDate, getCategoryLabel } from '../utils/helpers';
 import SkeletonCard from '../components/ui/SkeletonCard';
@@ -97,6 +97,22 @@ export default function MatchDetail() {
             </div>
           </div>
         </div>
+
+        {match.analysis && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-3xl mx-auto mb-8 p-5 rounded-2xl bg-gradient-to-br from-primary-50/80 to-purple-50/50 dark:from-primary-900/10 dark:to-purple-900/5 border border-primary-200/60 dark:border-primary-800/40 flex gap-4 text-left shadow-sm"
+          >
+            <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-xl h-fit text-primary-600 dark:text-primary-400">
+              <HiSparkles className="w-5 h-5 animate-pulse" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-primary-800 dark:text-primary-300 uppercase tracking-wider mb-1">AI Match Analysis</h3>
+              <p className="text-surface-700 dark:text-surface-300 text-sm leading-relaxed">{match.analysis}</p>
+            </div>
+          </motion.div>
+        )}
 
         {/* Side by side */}
         <div className="grid md:grid-cols-2 gap-6">

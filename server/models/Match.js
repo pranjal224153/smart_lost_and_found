@@ -38,6 +38,10 @@ const matchSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   }],
+  analysis: {
+    type: String,
+    default: '',
+  },
 }, {
   timestamps: true,
 });

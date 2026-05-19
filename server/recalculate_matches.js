@@ -26,17 +26,30 @@ async function triggerMatching(newItem, candidates) {
       const foundItem = newItem.type === 'found' ? newItem._id : result.candidate_id;
 
       try {
-        const match = await Match.findOneAndUpdate(
-          { lostItem, foundItem },
-          {
-            lostItem,
-            foundItem,
-            textScore: result.text_score || 0,
-            imageScore: result.image_score || 0,
-            combinedScore: result.combined_score || 0,
-          },
-          { upsert: true, new: true }
-        );
+        const existingMatch = await Match.findOne({ lostItem, foundItem });
+        let shouldUpdate = true;
+        if (existingMatch) {
+          const isNewLocal = !result.analysis || result.analysis.includes('Jaccard') || result.analysis.includes('local');
+          const isExistingAI = existingMatch.analysis && !existingMatch.analysis.includes('Jaccard') && !existingMatch.analysis.includes('local');
+          if (isNewLocal && isExistingAI) {
+            shouldUpdate = false;
+          }
+        }
+
+        if (shouldUpdate) {
+          await Match.findOneAndUpdate(
+            { lostItem, foundItem },
+            {
+              lostItem,
+              foundItem,
+              textScore: result.text_score || 0,
+              imageScore: result.image_score || 0,
+              combinedScore: result.combined_score || 0,
+              analysis: result.analysis || '',
+            },
+            { upsert: true, new: true }
+          );
+        }
 
         const candidateItem = candidates.find(c => c._id.toString() === result.candidate_id);
         if (candidateItem) {
